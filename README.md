@@ -1,18 +1,15 @@
-# New Bod Booking Bot
+# Bodleian Scheduler
 
-The Bod slot booking bot uses selenium to click through the process as fast as your internet will allow you to. The booker can be initialised and run on your computer with python3.
+The Bodleian Scheduler is a service that returns an ics calendar invite via your Oxford University email when you book a library slot through https://spacefinder.bodleian.ox.ac.uk/
 
-Please enter your details into the **userdata.json** completely and correctly.
+### Setup
 
-## Slot Preference IDs
+Go to https://www.oxtickets.co.uk/ where you can follow steps 1 and 2 in order to sign up for the service.
 
-Enter these IDs into each slot preference.
+Enter your Oxford University College email as seen below
 
 ```bash
-BOD UPPER
-BOD LOWER
-DUKE HUMFREYS
-VERE HARMSWORTH
+john.smith@college.ox.ac.uk
 ```
 
 If there are any issues please contact
