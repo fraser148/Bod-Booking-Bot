@@ -126,8 +126,8 @@ for user in userdata:
     userkeys[int(index)].append({"username":userdata[user][8]['username'],"password":userdata[user][8]['password']})
     index += 1
 
-
-NextDay_Date = datetime.datetime.today() + datetime.timedelta(days=3)
+# BUG Date has an extra 0 ie 08 but must be in form 8 instead ie February 8, 2021
+NextDay_Date = datetime.datetime.today() + datetime.timedelta(days=2)
 #day = NextDay_Date.strftime("%B %d, %Y").replace(" 0", " ")
 day = NextDay_Date.strftime("%B %d, %Y")
 
