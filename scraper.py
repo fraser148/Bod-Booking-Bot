@@ -10,7 +10,8 @@ from selenium.webdriver.chrome.service import Service
 
 # Define preference dictionary
 preference = {"UPPER BOD":["Upper Reading Room Desk Booking","10:00","13:00","16:30"],
-"LOWER BOD":["Lower Reading Room Desk Booking","10:00","13:00","16:30"]}
+"LOWER BOD":["Lower Reading Room Desk Booking","10:00","13:00","16:30"],
+"LAW LIB":["Law Library Desk Booking","10:00","13:00","16:30"]}
 
 # Check if the xpath exists on the webpage
 def hasXpath(xpath,driver):
@@ -33,7 +34,7 @@ def highlight(element):
     apply_style(orignal_style)
 
 # Click through the bookng process
-def book(userdata, service):
+def book(userdata, service, time_day):
     global preference
 
     # Login to SSO
@@ -64,17 +65,30 @@ def book(userdata, service):
             print("Calendar loading")
     # Clicking on slot until it loads
     okay = False
+    if time_day == "morning":
+        indexx = 1
+    elif time_day == "afternoon":
+        indexx = 2
+    else:
+        indexx = 3
+    NO_SLOTS = 0
     while okay != True:
         try:
             # NOT PASSING PREFERENCES
-            slot = driver.find_element_by_xpath("//div[contains(h5, '"+preference[userdata[7]["morning"]][0]+"') and contains(p, '"+preference[userdata[7]["morning"]][1]+"')]/parent::*/descendant::a")
+            slot = driver.find_element_by_xpath("//div[contains(h5, '"+preference[userdata[2][time_day]][0]+"') and contains(p, '"+preference[userdata[2][time_day]][indexx]+"')]/parent::*/descendant::a")
             #highlight(slot)
             slot.click()
             okay = True
         except:
             xpather = "//h3[contains(text(), 'Sorry, no spaces found')]"
+            xpather2 = "//div[contains(@class, 'tickets__submit')]"
             if hasXpath(xpather,driver):
                 print("NO MORE SLOTS")
+            elif hasXpath(xpather2,driver):
+                print("NO MORE SLOTS FOR THIS SPECIFIC ONE")
+                NO_SLOTS +=1
+                if NO_SLOTS > 3:
+                    return
             else:
                 print("Slots are loading")
     okay = False
@@ -124,6 +138,7 @@ for user in userdata:
     userdata[user].insert(4,userdata[user][-4])
     userkeys.append([dict(zip(ids, userdata[user][0:6]))])
     userkeys[int(index)].append({"username":userdata[user][8]['username'],"password":userdata[user][8]['password']})
+    userkeys[int(index)].append({"morning":userdata[user][7]['morning'],"afternoon":userdata[user][7]['afternoon'],"evening":userdata[user][7]['evening']})
     index += 1
 
 # BUG Date has an extra 0 ie 08 but must be in form 8 instead ie February 8, 2021
@@ -134,8 +149,10 @@ day = NextDay_Date.strftime("%B %d, %Y")
 service = Service('chromedriver.exe')
 service.start()
 threads = []
+times = ["morning","afternoon","evening"]
 for user in userkeys:
-    print("Thread Started")
-    t = threading.Thread(target=book, args=(user,service))
-    threads.append(t)
-    t.start()
+    for i in times:
+        print("Thread Started")
+        t = threading.Thread(target=book, args=(user,service,i))
+        threads.append(t)
+        t.start()
