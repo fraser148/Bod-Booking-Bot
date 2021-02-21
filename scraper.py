@@ -1,6 +1,7 @@
 # Bodleian Booker Bot
 
 import time
+import sched
 import json
 import datetime
 import threading
@@ -11,7 +12,14 @@ from selenium.webdriver.chrome.service import Service
 # Define preference dictionary
 preference = {"UPPER BOD":["Upper Reading Room Desk Booking","10:00","13:00","16:30"],
 "LOWER BOD":["Lower Reading Room Desk Booking","10:00","13:00","16:30"],
-"LAW LIB":["Law Library Desk Booking","10:00","13:00","16:30"]}
+"LAW LIB":["Law Library Desk Booking","10:00","13:00","16:30"],
+"GLINK":["Gladstone Link Desk Booking","10:00","13:00","16:30"],
+"UPPER RAD CAM":["Upper Camera Reader Desk Booking","10:00","13:00","16:30"],
+"LOWER RAD CAM":["Lower Camera Reader Desk Booking","10:00","13:00","16:30"],
+"SACKLER":["Sackler Library - Desk Booking","10:00","13:00","16:30"],
+"SSL":["Social Science Library - Open Plan Desk Booking","10:00","13:00","16:30"],
+"TAYLOR":["Taylor Institution Library - Desk Booking","10:00","13:00","16:30"],
+"VERE":["Vere Harmsworth Library Desk Booking","10:00","13:00","16:30"]}
 
 # Check if the xpath exists on the webpage
 def hasXpath(xpath,driver):
@@ -142,17 +150,26 @@ for user in userdata:
     index += 1
 
 # BUG Date has an extra 0 ie 08 but must be in form 8 instead ie February 8, 2021
-NextDay_Date = datetime.datetime.today() + datetime.timedelta(days=2)
+NextDay_Date = datetime.datetime.today() + datetime.timedelta(days=3)
 #day = NextDay_Date.strftime("%B %d, %Y").replace(" 0", " ")
 day = NextDay_Date.strftime("%B %d, %Y")
 
-service = Service('chromedriver.exe')
-service.start()
-threads = []
-times = ["morning","afternoon","evening"]
-for user in userkeys:
-    for i in times:
-        print("Thread Started")
-        t = threading.Thread(target=book, args=(user,service,i))
-        threads.append(t)
-        t.start()
+def runner():
+    service = Service('chromedriver.exe')
+    service.start()
+    threads = []
+    times = ["morning","afternoon","evening"]
+    for user in userkeys:
+        for i in times:
+            print("Thread Started")
+            t = threading.Thread(target=book, args=(user,service,i))
+            threads.append(t)
+            t.start()
+
+def wait_start(runTime):
+    startTime = datetime.time(*(map(int, runTime.split(':'))))
+    while startTime > datetime.datetime.today().time(): # you can add here any additional variable to break loop if necessary
+        time.sleep(1)# you can change 1 sec interval to any other
+    return runner()
+ 
+wait_start('09:00')
