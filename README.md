@@ -9,10 +9,16 @@ Please enter your details into the **userdata.json** completely and correctly.
 Enter these IDs into each slot preference.
 
 ```bash
-BOD UPPER
-BOD LOWER
-DUKE HUMFREYS
-VERE HARMSWORTH
+UPPER BOD
+LOWER BOD
+LAW LIB
+GLINK
+UPPER RAD CAM
+LOWER RAD CAM
+SACKLER
+SSL
+TAYLOR
+VERE
 ```
 
 If there are any issues please contact
